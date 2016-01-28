@@ -42,11 +42,12 @@ class DrawManager() {
       layoutY=(components.line.startY.value+components.line.endY.value)/2
     }
     components.circlePoint = new Circle(){
-      centerX = components.line.endX.value
-      centerY = components.line.endY.value
+      centerX =components.line.endX.value
+      centerY =components.line.endY.value
       radius=3
       fill=Color.Blue
     }
+
     return components
   }
 

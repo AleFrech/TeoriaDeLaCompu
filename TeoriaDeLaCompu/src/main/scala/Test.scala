@@ -70,7 +70,7 @@ object HelloStageDemo extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) =>println("Delete transaction")
+              case Some(list) =>removeTransition(list,content)
               case None => println("Cancel")
             }
           }
@@ -145,14 +145,37 @@ object HelloStageDemo extends JFXApp {
     }
     for(elem<-States){
       for(trans<-elem.transitionsList){
-        content.add(trans.transitionComponents.line)
-        content.add(trans.transitionComponents.labelText)
-        content.add(trans.transitionComponents.circlePoint)
+        if(!trans.isDeleted) {
+          content.add(trans.transitionComponents.line)
+          content.add(trans.transitionComponents.labelText)
+          content.add(trans.transitionComponents.circlePoint)
+        }
       }
     }
   }
 
-  def removeTransition(from_To:String,content:ObservableList[Node]):Unit={
-    
+  def removeTransition(from_To:String,content:ObservableList[Node]):Unit= {
+    var edge = from_To.split("~")
+    var from = edge(0)
+    var to = edge(1)
+    var name = edge(2)
+    content.remove(3, content.size())
+    for (elem <- States) {
+      if (elem.name != name && !elem.isDeleted) {
+        content.add(elem.stateComponents.circle)
+        content.add(elem.stateComponents.labelText)
+      } else
+        elem.isDeleted = true
+    }
+    for (elem <- States) {
+      for (trans <- elem.transitionsList) {
+        if (trans.transitionName != name && trans.DestinyStateName != to && !trans.isDeleted) {
+          content.add(trans.transitionComponents.line)
+          content.add(trans.transitionComponents.labelText)
+          content.add(trans.transitionComponents.circlePoint)
+        } else
+          trans.isDeleted = true
+      }
+    }
   }
 }
