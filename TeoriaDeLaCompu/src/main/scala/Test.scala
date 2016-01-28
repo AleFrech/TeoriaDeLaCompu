@@ -98,15 +98,21 @@ object HelloStageDemo extends JFXApp {
   }
 
   def addState(name:String,content:ObservableList[Node],posX:Double,posY:Double): Boolean ={
+    var hasColisioned=false
     for (elem <- States) {
       if(elem.name==name && !elem.isDeleted)
         return false
+      var collisonFormula:Double=Math.pow(elem.stateComponents.circle.centerX.value-posX,2) + Math.pow(elem.stateComponents.circle.centerY.value-posY,2)
+      if(0<=collisonFormula && collisonFormula<= Math.pow(40,2))
+        hasColisioned=true
     }
-    var state = new State(name)
-    state.stateComponents = drawManager.DrawState(posX,posY, name)
-    content.add(state.stateComponents.circle)
-    content.add(state.stateComponents.labelText)
-    States += state
+    if(!hasColisioned) {
+      var state = new State(name)
+      state.stateComponents = drawManager.DrawState(posX, posY, name)
+      content.add(state.stateComponents.circle)
+      content.add(state.stateComponents.labelText)
+      States += state
+    }
     return true
   }
 
@@ -142,7 +148,18 @@ object HelloStageDemo extends JFXApp {
         content.add(elem.stateComponents.labelText)
       } else
         elem.isDeleted=true
+        for(trans<-elem.transitionsList){
+          trans.isDeleted=true
+        }
     }
+
+    for(elem<-States){
+      for(trans<-elem.transitionsList){
+        if(trans.DestinyStateName==name)
+          trans.isDeleted=true
+      }
+    }
+
     for(elem<-States){
       for(trans<-elem.transitionsList){
         if(!trans.isDeleted) {
