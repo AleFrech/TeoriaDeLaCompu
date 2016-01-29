@@ -9,8 +9,43 @@ class AutomataManager() {
 
 
 
-  def evaluateDFA(expresion:String): Boolean ={
-    return true
+  def getTransition(elem: State,name:String):Transition={
+    for(trans<- elem.transitionsList){
+      if(trans.transitionName==name)
+        return trans
+    }
+    return null
   }
 
+  def getState(name:String):State={
+    for(elem<-States){
+      if(elem.name==name)
+        return elem
+    }
+    return null
+  }
+
+
+  def evaluateDFA(expresion:String): Boolean = {
+    if (States.size == 0)
+      return false
+    var i = 0;
+    for (elem <- States) {
+      if (elem.isInicial) {
+        var state = elem
+        for (x <- expresion) {
+          var transition = getTransition(state, x.toString)
+          if (transition == null)
+            return false
+          state = getState(transition.DestinyStateName)
+          if (state == null)
+            return false
+
+        }
+        return state.isFinal
+      }
+    }
+    return false
+
+  }
 }
