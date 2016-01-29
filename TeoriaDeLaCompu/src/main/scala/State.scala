@@ -7,6 +7,8 @@ import scala.collection.mutable.ArrayBuffer
 class State(pname:String) {
     var name=pname
     var isDeleted=false
+    var isInicial=false
+    var isFinal=false
     var stateComponents= new StateComponents()
     var transitionsList =  ArrayBuffer.empty[Transition]
 }

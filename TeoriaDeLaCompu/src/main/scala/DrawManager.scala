@@ -16,6 +16,7 @@ class DrawManager() {
       centerX = posX
       centerY = posY
       radius = 20
+       stroke=Color.LightGray
       fill = Color.LightGray
      }
      components.labelText = new Text(posX-6,posY-5,name){

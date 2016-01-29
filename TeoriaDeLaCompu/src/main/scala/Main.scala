@@ -16,29 +16,31 @@ object Main extends JFXApp {
     scene = new Scene {
       fill = Color.WhiteSmoke
 
-      var addTransitionButton = new Button("Add Transition"){
-          layoutX=0
-          layoutY=0
-          handleEvent(MouseEvent.MouseClicked){
-            a: MouseEvent => {
-              val dialog = new TextInputDialog(defaultValue = "") {
-                initOwner(stage)
-                title = "New Transition"
-                contentText = "Please enter state names separate by ~ :\n For example: q0~q1~value"
-              }
-              val result = dialog.showAndWait()
-              result match {
-                case Some(list) =>sceneManager.addTransition(list,content)
-                case None => println("Cancel")
-              }
+      var addTransitionButton = new Button("Add Transition") {
+        layoutX = 0
+        layoutY = 0
+
+        handleEvent(MouseEvent.MouseClicked) {
+          a: MouseEvent => {
+            val dialog = new TextInputDialog(defaultValue = "") {
+              initOwner(stage)
+              title = "New Transition"
+              contentText = "Please enter state names separate by ~ :\n For example: q0~q1~value"
+            }
+            val result = dialog.showAndWait()
+            result match {
+              case Some(list) => sceneManager.addDFATransition(list, content)
+              case None => println("Cancel")
             }
           }
+        }
       }
+      addTransitionButton.setStyle("-fx-font: 10 arial;")
 
-      var evaluateAutomataButton= new Button("Evaluate DFA"){
-        layoutX=94
-        layoutY=0
-        handleEvent(MouseEvent.MouseClicked){
+      var evaluateAutomataButton = new Button("Evaluate DFA") {
+        layoutX = 78
+        layoutY = 0
+        handleEvent(MouseEvent.MouseClicked) {
           a: MouseEvent => {
             val dialog = new TextInputDialog(defaultValue = "") {
               initOwner(stage)
@@ -47,17 +49,17 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(expresion) =>sceneManager.evaluateDFA(expresion,stage)
+              case Some(expresion) => sceneManager.evaluateDFA(expresion, stage)
               case None => println("Cancel")
             }
           }
         }
       }
-
-      var deleteButton = new Button("Delete State"){
-        layoutX=180
-        layoutY=0
-        handleEvent(MouseEvent.MouseClicked){
+      evaluateAutomataButton.setStyle("-fx-font: 10 arial;")
+      var deleteButton = new Button("Delete State") {
+        layoutX = 154
+        layoutY = 0
+        handleEvent(MouseEvent.MouseClicked) {
           a: MouseEvent => {
             val dialog = new TextInputDialog(defaultValue = "") {
               initOwner(stage)
@@ -66,17 +68,36 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(name) =>sceneManager.removeState(name,content)
+              case Some(name) => sceneManager.removeState(name, content)
               case None => println("Cancel")
             }
           }
         }
       }
-
-      var removeTransitionButton = new Button("Delete Transition"){
-        layoutX=260
-        layoutY=0
-        handleEvent(MouseEvent.MouseClicked){
+      deleteButton.setStyle("-fx-font: 10 arial;")
+      var editStateButton = new Button("Edit Initial&Final") {
+        layoutX = 223
+        layoutY = 0
+        handleEvent(MouseEvent.MouseClicked) {
+          a: MouseEvent => {
+            val dialog = new TextInputDialog(defaultValue = "") {
+              initOwner(stage)
+              title = "Edit Initial&Final"
+              contentText = "For example: I~q0 or F~q1~q2...."
+            }
+            val result = dialog.showAndWait()
+            result match {
+              case Some(list) => sceneManager.editInitialAndFinal(list)
+              case None => println("Cancel")
+            }
+          }
+        }
+      }
+      editStateButton.setStyle("-fx-font: 10 arial;")
+      var removeTransitionButton = new Button("Delete Transition") {
+        layoutX = 309
+        layoutY = 0
+        handleEvent(MouseEvent.MouseClicked) {
           a: MouseEvent => {
             val dialog = new TextInputDialog(defaultValue = "") {
               initOwner(stage)
@@ -85,14 +106,16 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) =>sceneManager.removeTransition(list,content)
+              case Some(list) => sceneManager.removeTransition(list, content)
               case None => println("Cancel")
             }
           }
         }
       }
+      removeTransitionButton.setStyle("-fx-font: 10 arial;")
       content.add(addTransitionButton)
       content.add(evaluateAutomataButton)
+      content.add(editStateButton)
       content.add(deleteButton)
       content.add(removeTransitionButton)
 
