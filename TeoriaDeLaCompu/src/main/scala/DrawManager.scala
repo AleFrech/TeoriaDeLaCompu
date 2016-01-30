@@ -15,46 +15,85 @@ import scalafx.scene.text.Text
 class DrawManager() {
    
 
-  def DrawState(posX: Double, posY: Double , name: String):StateComponents={
-     var components= new StateComponents()
-     components.circle = new Circle(){
-      centerX = posX
-      centerY = posY
-      radius = 20
-       stroke=Color.LightGray
-      fill = Color.LightGray
-     }
-     components.labelText = new Text(posX-6,posY-5,name){
-      fill= Color.Black
-      alignmentInParent=Pos.TopCenter
-     }
-     return components
+  def DrawState(name: String, content: ObservableList[Node], posX: Double, posY: Double,automataManager:DFAManager):Unit={
+    if (name.isEmpty)
+      return
+    var hasColisioned = false
+    for (elem <- automataManager.States) {
+      if (elem.name == name && !elem.isDeleted)
+        return
+      var collisonFormula: Double = Math.pow(elem.stateComponents.circle.centerX.value - posX, 2) + Math.pow(elem.stateComponents.circle.centerY.value - posY, 2)
+      if (0 <= collisonFormula && collisonFormula <= Math.pow(40, 2)) {
+        if (!elem.isDeleted)
+          hasColisioned = true
+      }
+    }
+    if (!hasColisioned) {
+      var state = new State(name)
+      state.stateComponents.circle = new Circle(){
+        centerX = posX
+        centerY = posY
+        radius = 20
+        stroke=Color.LightGray
+        fill = Color.LightGray
+      }
+      state.stateComponents.labelText = new Text(posX-6,posY-5,name){
+        fill= Color.Black
+        alignmentInParent=Pos.TopCenter
+      }
+      content.add(state.stateComponents.circle)
+      content.add(state.stateComponents.labelText)
+      automataManager.addState(state)
+    }
   }
 
-  def DrawTransition(from:State,to:State,Tname:String):TransitionComponents={
-    var components= new TransitionComponents()
+  def DrawTransition(from_To: String, content: ObservableList[Node],automataManager:DFAManager):Unit={
 
-    components.line= new Line(){
+    var edge = from_To.split("~")
+    if (edge.length < 3)
+      return
+    var fromState: State = null
+    var toState: State = null
+    for (elem <- automataManager.States) {
+      if (elem.name == edge(2)) {
+        fromState = elem
+      }
+      if (elem.name == edge(1)) {
+        toState = elem
+      }
+    }
+    if (fromState == null || toState == null)
+      return
+    for (trans <- fromState.transitionsList) {
+      if (trans.transitionName == edge(2) && !trans.isDeleted)
+        return
+    }
+
+    var transition = new Transition(edge(2), edge(1))
+    transition.transitionComponents.line= new Line(){
       stroke=Color.LightGray
       strokeWidth=1.0
-      startX.set(from.stateComponents.circle.centerX.value)
-      startY.set(from.stateComponents.circle.centerY.value)
-      endX.set(to.stateComponents.circle.centerX.value)
-      endY.set(to.stateComponents.circle.centerY.value)
+      startX.set(fromState.stateComponents.circle.centerX.value)
+      startY.set(fromState.stateComponents.circle.centerY.value)
+      endX.set(toState.stateComponents.circle.centerX.value)
+      endY.set(toState.stateComponents.circle.centerY.value)
     }
-    components.labelText=new Label(Tname){
+    transition.transitionComponents.labelText=new Label(edge(2)){
       textFill=Color.Black
-      layoutX=(components.line.startX.value+components.line.endX.value)/2
-      layoutY=(components.line.startY.value+components.line.endY.value)/2
-    }
-    components.circlePoint = new Circle(){
-      centerX =components.line.endX.value
-      centerY =components.line.endY.value
-      radius=3
-      fill=Color.Blue
+      layoutX=( transition.transitionComponents.line.startX.value+ transition.transitionComponents.line.endX.value)/2
+      layoutY=( transition.transitionComponents.line.startY.value+ transition.transitionComponents.line.endY.value)/2
     }
 
-    return components
+    transition.transitionComponents.circlePoint = new Circle(){
+      centerX = transition.transitionComponents.line.endX.value
+      centerY = transition.transitionComponents.line.endY.value
+      radius=3
+      fill=Color.Green
+    }
+    content.add(transition.transitionComponents.line)
+    content.add(transition.transitionComponents.labelText)
+    content.add(transition.transitionComponents.circlePoint)
+    automataManager.addTransition(fromState,transition)
   }
 
   def removeState(name: String, content: ObservableList[Node],automataManager:DFAManager): Unit = {

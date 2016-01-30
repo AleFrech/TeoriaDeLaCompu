@@ -30,7 +30,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) => automataManager.addTransition(list, content)
+              case Some(list) => drawManager.DrawTransition(list, content,automataManager)
               case None => println("Cancel")
             }
           }
@@ -130,7 +130,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(name) => var result = automataManager.addState(name, content, a.sceneX, a.sceneY)
+              case Some(name) =>drawManager.DrawState(name, content, a.sceneX, a.sceneY,automataManager)
               case None => println("Cancel")
             }
           }
