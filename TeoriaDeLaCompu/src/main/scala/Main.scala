@@ -9,7 +9,8 @@ import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 
 object Main extends JFXApp {
-  var sceneManager= new SceneManager()
+  var automataManager = new DFAManager
+  var drawManager = new DrawManager()
   stage = new JFXApp.PrimaryStage {
     width = 900
     height = 600
@@ -29,7 +30,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) => sceneManager.addDFATransition(list, content)
+              case Some(list) => automataManager.addTransition(list, content)
               case None => println("Cancel")
             }
           }
@@ -49,7 +50,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(expresion) => sceneManager.evaluateDFA(expresion, stage)
+              case Some(expresion) => drawManager.showResult(expresion, stage,automataManager)
               case None => println("Cancel")
             }
           }
@@ -68,7 +69,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(name) => sceneManager.removeState(name, content)
+              case Some(name) => drawManager.removeState(name, content, automataManager)
               case None => println("Cancel")
             }
           }
@@ -87,7 +88,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) => sceneManager.editInitialAndFinal(list)
+              case Some(list) => drawManager.editInitialAndFinal(list,automataManager)
               case None => println("Cancel")
             }
           }
@@ -106,7 +107,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(list) => sceneManager.removeTransition(list, content)
+              case Some(list) => drawManager.removeTransition(list, content, automataManager)
               case None => println("Cancel")
             }
           }
@@ -119,9 +120,9 @@ object Main extends JFXApp {
       content.add(deleteButton)
       content.add(removeTransitionButton)
 
-      handleEvent(MouseEvent.MouseClicked){
+      handleEvent(MouseEvent.MouseClicked) {
         a: MouseEvent => {
-          if(a.sceneY>60) {
+          if (a.sceneY > 60) {
             val dialog = new TextInputDialog(defaultValue = "") {
               initOwner(stage)
               title = "State Name"
@@ -129,7 +130,7 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(name) => var result = sceneManager.addState(name, content, a.sceneX, a.sceneY)
+              case Some(name) => var result = automataManager.addState(name, content, a.sceneX, a.sceneY)
               case None => println("Cancel")
             }
           }
@@ -138,3 +139,8 @@ object Main extends JFXApp {
     }
   }
 }
+
+
+
+
+
