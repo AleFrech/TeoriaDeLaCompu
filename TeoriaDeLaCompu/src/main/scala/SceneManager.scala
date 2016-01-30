@@ -80,10 +80,15 @@ class SceneManager() {
       if (elem.name != name && !elem.isDeleted) {
         content.add(elem.stateComponents.circle)
         content.add(elem.stateComponents.labelText)
-      } else
+      } else {
         elem.isDeleted = true
+        for (trans <- elem.transitionsList) {
+          trans.isDeleted = true
+        }
+      }
+    }
+    for (elem <- automataManager.States) {
       for (trans <- elem.transitionsList) {
-        trans.isDeleted = true
         if (trans.DestinyStateName == name)
           trans.isDeleted = true
       }

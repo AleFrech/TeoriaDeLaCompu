@@ -121,6 +121,7 @@ object Main extends JFXApp {
 
       handleEvent(MouseEvent.MouseClicked){
         a: MouseEvent => {
+          if(a.sceneY>60) {
             val dialog = new TextInputDialog(defaultValue = "") {
               initOwner(stage)
               title = "State Name"
@@ -128,9 +129,10 @@ object Main extends JFXApp {
             }
             val result = dialog.showAndWait()
             result match {
-              case Some(name) => var result=sceneManager.addState(name,content,a.sceneX,a.sceneY)
+              case Some(name) => var result = sceneManager.addState(name, content, a.sceneX, a.sceneY)
               case None => println("Cancel")
             }
+          }
         }
       }
     }

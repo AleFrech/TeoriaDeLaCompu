@@ -11,7 +11,7 @@ class AutomataManager() {
 
   def getTransition(elem: State,name:String):Transition={
     for(trans<- elem.transitionsList){
-      if(trans.transitionName==name)
+      if(trans.transitionName==name&& !trans.isDeleted)
         return trans
     }
     return null
@@ -19,7 +19,7 @@ class AutomataManager() {
 
   def getState(name:String):State={
     for(elem<-States){
-      if(elem.name==name)
+      if(elem.name==name && !elem.isDeleted)
         return elem
     }
     return null
