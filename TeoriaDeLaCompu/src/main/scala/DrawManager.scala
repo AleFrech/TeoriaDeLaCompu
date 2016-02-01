@@ -232,6 +232,7 @@ class DrawManager() {
       if (value) {
         contentText = "Expresion accepted"
       } else {
+        alertType.value=AlertType.Error
         contentText = "Expresion not accepted"
       }
     }.showAndWait()
