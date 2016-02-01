@@ -133,6 +133,7 @@ object Main extends JFXApp {
               case Some(name) =>drawManager.DrawState(name, content, a.sceneX, a.sceneY,automataManager)
               case None => println("Cancel")
             }
+            println(automataManager.States.size)
           }
         }
       }

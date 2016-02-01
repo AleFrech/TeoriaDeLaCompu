@@ -55,7 +55,7 @@ class DrawManager() {
     var fromState: State = null
     var toState: State = null
     for (elem <- automataManager.States) {
-      if (elem.name == edge(2)) {
+      if (elem.name == edge(0)) {
         fromState = elem
       }
       if (elem.name == edge(1)) {
@@ -70,29 +70,54 @@ class DrawManager() {
     }
 
     var transition = new Transition(edge(2), edge(1))
-    transition.transitionComponents.line= new Line(){
-      stroke=Color.LightGray
-      strokeWidth=1.0
-      startX.set(fromState.stateComponents.circle.centerX.value)
-      startY.set(fromState.stateComponents.circle.centerY.value)
-      endX.set(toState.stateComponents.circle.centerX.value)
-      endY.set(toState.stateComponents.circle.centerY.value)
-    }
-    transition.transitionComponents.labelText=new Label(edge(2)){
-      textFill=Color.Black
-      layoutX=( transition.transitionComponents.line.startX.value+ transition.transitionComponents.line.endX.value)/2
-      layoutY=( transition.transitionComponents.line.startY.value+ transition.transitionComponents.line.endY.value)/2
-    }
 
-    transition.transitionComponents.circlePoint = new Circle(){
-      centerX = transition.transitionComponents.line.endX.value
-      centerY = transition.transitionComponents.line.endY.value
-      radius=3
-      fill=Color.Green
+    if(edge(0)!=edge(1)){
+      transition.transitionComponents.line= new Line(){
+        stroke=Color.LightGray
+        strokeWidth=1.0
+        startX.set(fromState.stateComponents.circle.centerX.value)
+        startY.set(fromState.stateComponents.circle.centerY.value)
+        endX.set(toState.stateComponents.circle.centerX.value)
+        endY.set(toState.stateComponents.circle.centerY.value)
+      }
+      transition.transitionComponents.labelText=new Label(edge(2)){
+        textFill=Color.Black
+        layoutX=( transition.transitionComponents.line.startX.value+ transition.transitionComponents.line.endX.value)/2
+        layoutY=( transition.transitionComponents.line.startY.value+ transition.transitionComponents.line.endY.value)/2
+      }
+
+      transition.transitionComponents.circlePoint = new Circle(){
+        centerX = transition.transitionComponents.line.endX.value
+        centerY = transition.transitionComponents.line.endY.value
+        radius=3
+        fill=Color.Green
+      }
+
+      content.add(transition.transitionComponents.line)
+      content.add(transition.transitionComponents.labelText)
+      content.add(transition.transitionComponents.circlePoint)
+
+    }else{
+
+      transition.transitionComponents.buckleCircle= new Circle(){
+        centerX=fromState.stateComponents.circle.centerX.value
+        centerY=fromState.stateComponents.circle.centerY.value
+        radius = 25
+        stroke=Color.Black
+        strokeWidth=2
+        fill = Color.LightGray
+      }
+      transition.transitionComponents.buckleCircle.setOpacity(0.1)
+      transition.transitionComponents.labelText=new Label(edge(2)){
+        textFill=Color.Black
+        layoutX=fromState.stateComponents.circle.centerX.value-4
+        layoutY=fromState.stateComponents.circle.centerY.value-40
+      }
+
+      content.add(transition.transitionComponents.buckleCircle)
+      content.add(transition.transitionComponents.labelText)
+
     }
-    content.add(transition.transitionComponents.line)
-    content.add(transition.transitionComponents.labelText)
-    content.add(transition.transitionComponents.circlePoint)
     automataManager.addTransition(fromState,transition)
   }
 
@@ -121,9 +146,14 @@ class DrawManager() {
     for (elem <- automataManager.States) {
       for (trans <- elem.transitionsList) {
         if (!trans.isDeleted) {
-          content.add(trans.transitionComponents.line)
-          content.add(trans.transitionComponents.labelText)
-          content.add(trans.transitionComponents.circlePoint)
+          if(trans.transitionComponents.line!=null)
+            content.add(trans.transitionComponents.line)
+          if(trans.transitionComponents.labelText!=null)
+            content.add(trans.transitionComponents.labelText)
+          if(trans.transitionComponents.circlePoint!=null)
+            content.add(trans.transitionComponents.circlePoint)
+          if(trans.transitionComponents.buckleCircle!=null)
+            content.add(trans.transitionComponents.buckleCircle)
         }
       }
     }
@@ -147,16 +177,19 @@ class DrawManager() {
     for (elem <- automataManager.States) {
       for (trans <- elem.transitionsList) {
         if (trans.transitionName != name && trans.DestinyStateName != to && !trans.isDeleted) {
-          content.add(trans.transitionComponents.line)
-          content.add(trans.transitionComponents.labelText)
-          content.add(trans.transitionComponents.circlePoint)
+          if(trans.transitionComponents.line!=null)
+            content.add(trans.transitionComponents.line)
+          if(trans.transitionComponents.labelText!=null)
+            content.add(trans.transitionComponents.labelText)
+          if(trans.transitionComponents.circlePoint!=null)
+            content.add(trans.transitionComponents.circlePoint)
+          if(trans.transitionComponents.buckleCircle!=null)
+            content.add(trans.transitionComponents.buckleCircle)
         } else
           trans.isDeleted = true
       }
     }
   }
-
-
 
   def editInitialAndFinal(list: String,automataManager:DFAManager): Unit = {
     val intialorfinalList = list.split("~")

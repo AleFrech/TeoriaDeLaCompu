@@ -7,4 +7,5 @@ class TransitionComponents {
   var line: Line=null
   var labelText: Label=null
   var circlePoint:Circle=null
+  var buckleCircle:Circle=null
 }
