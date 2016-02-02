@@ -36,7 +36,6 @@ class DFAManager()extends Serializable{
   def evaluate(expresion:String): Boolean = {
     if (States.size == 0)
       return false
-    var i = 0;
     for (elem <- States) {
       if (elem.isInicial) {
         var state = elem
@@ -47,9 +46,11 @@ class DFAManager()extends Serializable{
           state = getState(transition.DestinyStateName)
           if (state == null)
             return false
-
         }
-        return state.isFinal
+        if(state.isFinal)
+          return true
+        else
+          return false
       }
     }
     return false
@@ -235,52 +236,4 @@ class DFAManager()extends Serializable{
     }
   }
 
-  def editInitialAndFinal(list: String): Unit = {
-    val intialorfinalList = list.split("~")
-    if (intialorfinalList.length < 2)
-      return
-    if (intialorfinalList(0) == "I" && intialorfinalList.size == 2) {
-      for (elem <- States) {
-        if (elem.name == intialorfinalList(1)) {
-          elem.isInicial = true
-          elem.stateComponents.circle.fill = Color.Red
-        } else {
-          elem.isInicial = false
-          elem.stateComponents.circle.fill = Color.LightGray
-        }
-      }
-    }
-
-    if (intialorfinalList(0) == "F") {
-      var i = 0
-      for (i <- 1 to intialorfinalList.size - 1) {
-        for (elem <- States) {
-          if (elem.name == intialorfinalList(i)) {
-            elem.isFinal = !elem.isFinal
-          }
-          if (elem.isFinal)
-            elem.stateComponents.circle.stroke = Color.Blue
-          else
-            elem.stateComponents.circle.stroke = Color.LightGray
-        }
-      }
-    }
-  }
-
-  def showResult(expresion: String, stage: JFXApp.PrimaryStage): Unit = {
-    val value =evaluate(expresion)
-    new Alert(AlertType.Information) {
-      initOwner(stage)
-      title = "Result Dialog"
-      headerText = "Result"
-      if (value) {
-        contentText = "Expresion accepted"
-      } else {
-        alertType.value=AlertType.Error
-        contentText = "Expresion not accepted"
-      }
-    }.showAndWait()
-  }
-
-  override def toString = s"DFAManager()"
 }

@@ -5,14 +5,15 @@ import scalafx.Includes._
 import DFATYPES._
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
-import scalafx.scene.control.{Button, TextInputDialog}
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{Alert, Button, TextInputDialog}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.paint.Color
 
 object Main extends JFXApp {
 
+  var automataManager:DFAManager=null
   def run(typeDFA:DFATYPES): Unit = {
-    var automataManager:DFAManager=null
     if(typeDFA==DFATYPES.DFA) {
        automataManager = new DFAManager()
     }else if(typeDFA==DFATYPES.NFA){
@@ -57,7 +58,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(expresion) => automataManager.showResult(expresion, stage)
+                case Some(expresion) => showResult(expresion, stage)
                 case None => println("Cancel")
               }
             }
@@ -95,7 +96,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(list) => automataManager.editInitialAndFinal(list)
+                case Some(list) => editInitialAndFinal(list,automataManager)
                 case None => println("Cancel")
               }
             }
@@ -129,7 +130,8 @@ object Main extends JFXApp {
               val dialog = new TextInputDialog(defaultValue = "") {
                 initOwner(stage)
                 title = "Save To File "
-                contentText = "Please enter names of File "
+                contentText = "Working on it sorry for the inconvenience "
+
               }
               val result = dialog.showAndWait()
               result match {
@@ -165,4 +167,51 @@ object Main extends JFXApp {
       }
     }
   }
+  def editInitialAndFinal(list: String,manager:DFAManager): Unit = {
+    val intialorfinalList = list.split("~")
+    if (intialorfinalList.length < 2)
+      return
+    if (intialorfinalList(0) == "I" && intialorfinalList.size == 2) {
+      for (elem <- manager.States) {
+        if (elem.name == intialorfinalList(1)) {
+          elem.isInicial = true
+          elem.stateComponents.circle.fill = Color.Red
+        } else {
+          elem.isInicial = false
+          elem.stateComponents.circle.fill = Color.LightGray
+        }
+      }
+    }
+
+    if (intialorfinalList(0) == "F") {
+      var i = 0
+      for (i <- 1 to intialorfinalList.size - 1) {
+        for (elem <-manager.States) {
+          if (elem.name == intialorfinalList(i)) {
+            elem.isFinal = !elem.isFinal
+          }
+          if (elem.isFinal)
+            elem.stateComponents.circle.stroke = Color.Blue
+          else
+            elem.stateComponents.circle.stroke = Color.LightGray
+        }
+      }
+    }
+  }
+
+  def showResult(expresion: String, stage: JFXApp.PrimaryStage): Unit = {
+    val value =automataManager.evaluate(expresion)
+    new Alert(AlertType.Information) {
+      initOwner(stage)
+      title = "Result Dialog"
+      headerText = "Result"
+      if (value) {
+        contentText = "Expresion accepted"
+      } else {
+        alertType.value=AlertType.Error
+        contentText = "Expresion not accepted"
+      }
+    }.showAndWait()
+  }
+
 }
