@@ -15,8 +15,9 @@ object Main extends JFXApp {
     var automataManager:DFAManager=null
     if(typeDFA==DFATYPES.DFA) {
        automataManager = new DFAManager()
+    }else if(typeDFA==DFATYPES.NFA){
+      automataManager = new NFAManager()
     }
-    val drawManager = new DrawManager()
     stage = new JFXApp.PrimaryStage {
       width = 900
       height = 600
@@ -36,7 +37,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(list) => drawManager.DrawTransition(list, content, automataManager)
+                case Some(list) => automataManager.DrawTransition(list, content)
                 case None => println("Cancel")
               }
             }
@@ -44,7 +45,7 @@ object Main extends JFXApp {
         }
         addTransitionButton.setStyle("-fx-font: 10 arial;")
 
-        var evaluateAutomataButton = new Button("Evaluate DFA") {
+        var evaluateAutomataButton = new Button("Evaluate ") {
           layoutX = 78
           layoutY = 0
           handleEvent(MouseEvent.MouseClicked) {
@@ -56,7 +57,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(expresion) => drawManager.showResult(expresion, stage, automataManager)
+                case Some(expresion) => automataManager.showResult(expresion, stage)
                 case None => println("Cancel")
               }
             }
@@ -64,7 +65,7 @@ object Main extends JFXApp {
         }
         evaluateAutomataButton.setStyle("-fx-font: 10 arial;")
         var deleteButton = new Button("Delete State") {
-          layoutX = 154
+          layoutX = 134
           layoutY = 0
           handleEvent(MouseEvent.MouseClicked) {
             a: MouseEvent => {
@@ -75,7 +76,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(name) => drawManager.removeState(name, content, automataManager)
+                case Some(name) => automataManager.removeState(name, content)
                 case None => println("Cancel")
               }
             }
@@ -83,7 +84,7 @@ object Main extends JFXApp {
         }
         deleteButton.setStyle("-fx-font: 10 arial;")
         var editStateButton = new Button("Edit Initial&Final") {
-          layoutX = 223
+          layoutX = 203
           layoutY = 0
           handleEvent(MouseEvent.MouseClicked) {
             a: MouseEvent => {
@@ -94,7 +95,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(list) => drawManager.editInitialAndFinal(list, automataManager)
+                case Some(list) => automataManager.editInitialAndFinal(list)
                 case None => println("Cancel")
               }
             }
@@ -102,7 +103,7 @@ object Main extends JFXApp {
         }
         editStateButton.setStyle("-fx-font: 10 arial;")
         var removeTransitionButton = new Button("Delete Transition") {
-          layoutX = 309
+          layoutX = 289
           layoutY = 0
           handleEvent(MouseEvent.MouseClicked) {
             a: MouseEvent => {
@@ -113,19 +114,38 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(list) => drawManager.removeTransition(list, content, automataManager)
+                case Some(list) => automataManager.removeTransition(list, content)
                 case None => println("Cancel")
               }
             }
           }
         }
         removeTransitionButton.setStyle("-fx-font: 10 arial;")
+        var saveButton = new Button("Save File") {
+          layoutX = 378
+          layoutY = 0
+          handleEvent(MouseEvent.MouseClicked) {
+            a: MouseEvent => {
+              val dialog = new TextInputDialog(defaultValue = "") {
+                initOwner(stage)
+                title = "Save To File "
+                contentText = "Please enter names of File "
+              }
+              val result = dialog.showAndWait()
+              result match {
+                case Some(name) => FileManager.saveDFAToFile(automataManager,name)
+                case None => println("Cancel")
+              }
+            }
+          }
+        }
+        saveButton.setStyle("-fx-font: 10 arial;")
         content.add(addTransitionButton)
         content.add(evaluateAutomataButton)
         content.add(editStateButton)
         content.add(deleteButton)
         content.add(removeTransitionButton)
-
+        content.add(saveButton)
         handleEvent(MouseEvent.MouseClicked) {
           a: MouseEvent => {
             if (a.sceneY > 60) {
@@ -136,7 +156,7 @@ object Main extends JFXApp {
               }
               val result = dialog.showAndWait()
               result match {
-                case Some(name) => drawManager.DrawState(name, content, a.sceneX, a.sceneY, automataManager)
+                case Some(name) => automataManager.DrawState(name, content, a.sceneX, a.sceneY)
                 case None => println("Cancel")
               }
             }
