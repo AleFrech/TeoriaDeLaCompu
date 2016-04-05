@@ -4,8 +4,7 @@ import scalafx.scene.text.Text
 /**
   * Created by AlejandroFrech on 1/27/2016.
   */
-@SerialVersionUID(100L)
-class StateComponents()extends Serializable {
+class StateComponents() {
   var circle: Circle=null
   var labelText: Text=null
 }

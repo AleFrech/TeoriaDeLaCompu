@@ -3,8 +3,7 @@ import scalafx.scene.shape.{Circle, Line}
 /**
   * Created by AlejandroFrech on 1/27/2016.
   */
-@SerialVersionUID(100L)
-class TransitionComponents()extends Serializable {
+class TransitionComponents() {
   var line: Line=null
   var labelText: Label=null
   var circlePoint:Circle=null
